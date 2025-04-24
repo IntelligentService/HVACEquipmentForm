@@ -94,7 +94,7 @@
   </div>
 
   <!-- Page 2: Equipment Selection -->
-  <div class="page" id="equipmentPage">
+  <div class="page" id="equipmentPage" style="display: none;">
     <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
     <h2>What would you like to replace?</h2>
     <div class="options-grid">
@@ -115,7 +115,7 @@
   </div>
 
   <!-- Page 3: Efficiency Selection -->
-  <div class="page" id="efficiencyPage">
+  <div class="page" id="efficiencyPage" style="display: none;">
     <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
     <h2>Choose Your Efficiency Level</h2>
     <div class="options-grid">
@@ -136,7 +136,7 @@
   </div>
 
   <!-- Page 4: Thermostat Selection -->
-  <div class="page" id="thermostatPage">
+  <div class="page" id="thermostatPage" style="display: none;">
     <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
     <h2>Select Your Thermostat</h2>
     <div class="options-grid">
@@ -153,7 +153,7 @@
   </div>
 
   <!-- Page 5: Accessories Selection -->
-  <div class="page" id="accessoriesPage">
+  <div class="page" id="accessoriesPage" style="display: none;">
     <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
     <h2>Choose Optional Accessories</h2>
     <div class="options-grid">
@@ -170,7 +170,7 @@
   </div>
 
   <!-- Page 6: Filtration Selection -->
-  <div class="page" id="filtrationPage">
+  <div class="page" id="filtrationPage" style="display: none;">
     <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
     <h2>Select a Filtration Option</h2>
     <div class="options-grid">
@@ -191,7 +191,7 @@
   </div>
 
   <!-- Page 7: Summary and PDF Generation -->
-  <div class="page" id="equipmentAdvisorPage">
+  <div class="page" id="equipmentAdvisorPage" style="display: none;">
     <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
     <h2>Equipment Advisor Details</h2>
     <form id="advisorForm" style="text-align: left; max-width: 500px; margin: 0 auto;">
@@ -286,7 +286,7 @@ function generatePDF() {
   generateSummary();
   const printWindow = window.open('', '', 'width=800,height=900');
   const summaryContent = document.getElementById('summaryList').innerHTML;
-  const signatureHTML = '';
+
   printWindow.document.write(`
     <html>
       <head>
@@ -306,18 +306,17 @@ function generatePDF() {
         <ul>
           ${Array.from(document.querySelectorAll('#proposalList li')).map(li => {
             const model = li.querySelector('strong')?.innerText || '';
-            const text = li.innerText.replace(/Price: \$/i, '').replace(/
-/g, ' ');
             const price = li.querySelector('input')?.value || '';
-            return `<li><strong>${model}</strong>: ${text.trim()} - <strong>Final Price: $${price}</strong></li>`;
+            const details = li.innerText.replace(/Price: \$[\d.]+/, '').replace(/\n/g, ' ');
+            return `<li><strong>${model}</strong>: ${details.trim()} - <strong>Final Price: $${price}</strong></li>`;
           }).join('')}
-        </ul>`
-        ${signatureHTML}
+        </ul>
       </body>
     </html>`);
   printWindow.document.close();
   printWindow.print();
 }
+
 
 async function fetchEquipmentOptions() {
   try {
