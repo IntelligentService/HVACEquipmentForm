@@ -7,11 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Roboto', sans-serif;
       background: #f2faff;
@@ -38,14 +34,8 @@
       opacity: 1;
       transform: translateY(0);
     }
-    .logo {
-      width: 200px;
-      margin-bottom: 20px;
-    }
-    h1, h2 {
-      color: #007cbf;
-      margin-bottom: 20px;
-    }
+    .logo { width: 200px; margin-bottom: 20px; }
+    h1, h2 { color: #007cbf; margin-bottom: 20px; }
     .options-grid {
       display: flex;
       justify-content: center;
@@ -63,12 +53,8 @@
       border: 3px solid transparent;
       transition: border-color 0.3s;
     }
-    .option-img:hover {
-      border-color: #007cbf;
-    }
-    .option-img.selected {
-      border-color: #28a745;
-    }
+    .option-img:hover { border-color: #007cbf; }
+    .option-img.selected { border-color: #28a745; }
     button {
       background-color: #007cbf;
       color: white;
@@ -77,154 +63,67 @@
       border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 20px;
+      margin: 10px;
       transition: background 0.3s ease;
     }
-    button:hover {
-      background-color: #005f94;
+    button:hover { background-color: #005f94; }
+    .text-option {
+      cursor: pointer;
+      color: #007cbf;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .text-option.selected { color: #28a745; }
+    .summary-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .summary-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+      width: 100%;
+    }
+    .summary-item img { width: 80px; height: auto; border-radius: 8px; }
+    .summary-item button {
+      margin-left: auto;
+      background: #ffc107;
+      color: black;
     }
   </style>
 </head>
 <body>
-  <!-- Page 1: Intro -->
-  <div class="page show" id="introPage">
+
+  <!-- Page: Summary -->
+  <div class="page" id="summaryPage">
     <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
-    <h1>Customize Your HVAC Equipment</h1>
-    <button onclick="goToNextPage('introPage', 'equipmentPage')">Start</button>
+    <h2>Your Custom HVAC Selection</h2>
+    <div class="summary-section" id="summaryContent"></div>
+    <button onclick="goToPreviousPage('summaryPage', 'thermostatPage')">Back</button>
+    <button onclick="generatePDF()">Download Proposal PDF</button>
   </div>
 
-  <!-- Page 2: Equipment Selection -->
-  <div class="page" id="equipmentPage" style="display: none;">
-    <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
-    <h2>What would you like to replace?</h2>
-    <div class="options-grid">
-      <div class="option-box" onclick="selectOption(this, 'system', 'Furnace')">
-        <img src="Furnace.png" class="option-img" alt="Furnace">
-        <p>Furnace</p>
-      </div>
-      <div class="option-box" onclick="selectOption(this, 'system', 'Air Conditioner')">
-        <img src="air_conditioner.png" class="option-img" alt="Air Conditioner">
-        <p>Air Conditioner</p>
-      </div>
-      <div class="option-box" onclick="selectOption(this, 'system', 'Full System')">
-        <img src="Full_system.png" class="option-img" alt="Full System">
-        <p>Full System</p>
-      </div>
-    </div>
-    <button onclick="goToNextPage('equipmentPage', 'efficiencyPage')">Next</button>
-  </div>
+  <script>
+    let selections = {};
 
-  <!-- Page 3: Efficiency Selection -->
-  <div class="page" id="efficiencyPage" style="display: none;">
-    <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
-    <h2>Choose Your Efficiency Level</h2>
-    <div class="options-grid">
-      <div class="option-box" onclick="selectOption(this, 'efficiency', 'Standard (SEER 13–14)')">
-        <img src="efficiency_standard.png" class="option-img" alt="Standard">
-        <p>Standard (SEER 13–14)</p>
-      </div>
-      <div class="option-box" onclick="selectOption(this, 'efficiency', 'Mid (SEER 15–17)')">
-        <img src="efficiency_mid.png" class="option-img" alt="Mid Efficiency">
-        <p>Mid Efficiency (SEER 15–17)</p>
-      </div>
-      <div class="option-box" onclick="selectOption(this, 'efficiency', 'High (SEER 18+)')">
-        <img src="efficiency_high.png" class="option-img" alt="High Efficiency">
-        <p>High Efficiency (SEER 18+)</p>
-      </div>
-    </div>
-    <button onclick="goToNextPage('efficiencyPage', 'thermostatPage')">Next</button>
-  </div>
+    function selectOption(el, category, value) {
+      document.querySelectorAll(`[data-category='${category}']`).forEach(el => el.classList.remove('selected'));
+      el.querySelector('img').classList.add('selected');
+      el.setAttribute('data-category', category);
+      selections[category] = value;
+    }
 
-  <!-- Page 4: Thermostat Selection -->
-  <div class="page" id="thermostatPage" style="display: none;">
-    <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
-    <h2>Select Your Thermostat</h2>
-    <div class="options-grid">
-      <div class="option-box" onclick="selectOption(this, 'thermostat', 'Honeywell T4')">
-        <img src="Thermostat_T4.png" class="option-img" alt="Honeywell T4">
-        <p>Honeywell T4</p>
-      </div>
-      <div class="option-box" onclick="selectOption(this, 'thermostat', 'Ecobee Pro')">
-        <img src="Thermostat_Ecobee.png" class="option-img" alt="Ecobee Pro">
-        <p>Ecobee Pro</p>
-      </div>
-    </div>
-    <button onclick="goToNextPage('thermostatPage', 'accessoriesPage')">Next</button>
-  </div>
+    function selectTextOption(el, category, value) {
+      document.querySelectorAll('.text-option').forEach(e => e.classList.remove('selected'));
+      el.classList.add('selected');
+      selections[category] = value;
+    }
 
-  <!-- Page 5: Accessories Selection -->
-  <div class="page" id="accessoriesPage" style="display: none;">
-    <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
-    <h2>Choose Optional Accessories</h2>
-    <div class="options-grid">
-      <div class="option-box" onclick="toggleMultiOption(this, 'accessories', 'Humidifier')">
-        <img src="Humidifier.png" class="option-img" alt="Humidifier">
-        <p>Humidifier</p>
-      </div>
-      <div class="option-box" onclick="toggleMultiOption(this, 'accessories', 'Air Purifier')">
-        <img src="Air_Purifier.png" class="option-img" alt="Air Purifier">
-        <p>Air Purifier</p>
-      </div>
-    </div>
-    <button onclick="goToNextPage('accessoriesPage', 'filtrationPage')">Next</button>
-  </div>
-
-  <!-- Page 6: Filtration Selection -->
-  <div class="page" id="filtrationPage" style="display: none;">
-    <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
-    <h2>Select a Filtration Option</h2>
-    <div class="options-grid">
-      <div class="option-box" onclick="selectOption(this, 'filtration', '1 Inch Filter')">
-        <img src="Filter_1Inch.png" class="option-img" alt="1 Inch Filter">
-        <p>1" Filter Rack</p>
-      </div>
-      <div class="option-box" onclick="selectOption(this, 'filtration', '4 Inch Media Filter')">
-        <img src="Filter_4inch.png" class="option-img" alt="4 Inch Media Filter">
-        <p>4" Media Filter Cabinet</p>
-      </div>
-      <div class="option-box" onclick="selectOption(this, 'filtration', 'CleanEffects Air Cleaner')">
-        <img src="Filter_Cleaneffects.png" class="option-img" alt="CleanEffects">
-        <p>CleanEffects™ Air Cleaner</p>
-      </div>
-    </div>
-    <button onclick="goToNextPage('filtrationPage', 'equipmentAdvisorPage')">Next</button>
-  </div>
-
-  <!-- Page 7: Summary and PDF Generation -->
-  <div class="page" id="equipmentAdvisorPage" style="display: none;">
-    <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
-    <h2>Equipment Advisor Details</h2>
-    <form id="advisorForm" style="text-align: left; max-width: 500px; margin: 0 auto;">
-      <label for="cabinet">Cabinet Size:</label>
-      <input type="text" id="cabinet" name="cabinet" style="width: 100%; margin-bottom: 10px;"><br>
-
-      <label for="btu">BTU (Furnace Only):</label>
-      <input type="text" id="btu" name="btu" style="width: 100%; margin-bottom: 10px;"><br>
-
-      <label for="tonnage">Tonnage (AC Only):</label>
-      <input type="text" id="tonnage" name="tonnage" style="width: 100%; margin-bottom: 10px;"><br>
-
-      <label>Flow Direction (Furnace Only):</label><br>
-      <input type="radio" id="upflow" name="flow" value="Upflow">
-      <label for="upflow">Upflow</label>
-      <input type="radio" id="downflow" name="flow" value="Downflow">
-      <label for="downflow">Downflow</label><br><br>
-
-      <button type="button" onclick="goToNextPage('equipmentAdvisorPage', 'summaryPage')">Next</button>
-    </form>
-  </div>
-
-<div class="page" id="summaryPage" style="display: none;">
-    <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
-    <h2>Your Selections Summary</h2>
-    <ul id="summaryList" style="text-align: left; margin: 20px auto; max-width: 400px;"></ul>
-    
-    <button onclick="generateSummary()">Generate Summary</button>
-    <button onclick="emailSummary()">Email Summary</button>
-    <button onclick="generatePDF()">Download Proposal as PDF</button>
-  </div>
-
-<script>
     function goToNextPage(currentId, nextId) {
       const current = document.getElementById(currentId);
       current.classList.remove('show');
@@ -234,113 +133,46 @@
           const next = document.getElementById(nextId);
           next.style.display = 'block';
           setTimeout(() => next.classList.add('show'), 50);
-        } else {
-          alert('Next page coming soon...');
+        }
+        if (nextId === 'summaryPage') renderSummary();
+      }, 600);
+    }
+
+    function goToPreviousPage(currentId, prevId) {
+      const current = document.getElementById(currentId);
+      current.classList.remove('show');
+      setTimeout(() => {
+        current.style.display = 'none';
+        if (prevId) {
+          const prev = document.getElementById(prevId);
+          prev.style.display = 'block';
+          setTimeout(() => prev.classList.add('show'), 50);
         }
       }, 600);
     }
 
-    const selections = {
-  accessories: []
-};
-    function selectOption(el, category, value) {
-  selections[category] = value;
-  // deselect others in the same category
-  document.querySelectorAll(`[onclick*="selectOption"][onclick*='${category}']`).forEach(box => box.querySelector('img').classList.remove('selected'));
-  el.querySelector('img').classList.add('selected');
-}
-  function toggleMultiOption(el, category, value) {
-  const img = el.querySelector('img');
-  if (!selections[category].includes(value)) {
-    selections[category].push(value);
-    img.classList.add('selected');
-  } else {
-    selections[category] = selections[category].filter(v => v !== value);
-    img.classList.remove('selected');
-  }
-}
-function generateSummary() {
-  fetchEquipmentOptions();
-  const list = document.getElementById('summaryList');
-  list.innerHTML = '';
-  for (const [key, val] of Object.entries(selections)) {
-    if (Array.isArray(val)) {
-      val.forEach(item => list.innerHTML += `<li><strong>${capitalize(key)}:</strong> ${item}</li>`);
-    } else {
-      list.innerHTML += `<li><strong>${capitalize(key)}:</strong> ${val}</li>`;
+    function renderSummary() {
+      const summary = document.getElementById('summaryContent');
+      summary.innerHTML = '';
+      for (const key in selections) {
+        const imgPath = key === 'equipment' ? 'furnace.png' : key === 'efficiency' ? 'efficiency_mid.png' : key === 'thermostat' && selections[key] === 'Honeywell T4' ? 'Thermostat_T4.png' : 'Thermostat_Ecobee.png';
+        summary.innerHTML += `
+          <div class="summary-item">
+            <img src="${imgPath}" alt="${selections[key]}" />
+            <div><strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> ${selections[key]}</div>
+            <button onclick="editSelection('${key}')">Change</button>
+          </div>`;
+      }
     }
-  }
-}
 
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
-}
+    function editSelection(key) {
+      const pageMap = { equipment: 'equipmentPage', efficiency: 'efficiencyPage', thermostat: 'thermostatPage' };
+      goToNextPage('summaryPage', pageMap[key]);
+    }
 
-function emailSummary() {
-  generateSummary();
-  const body = encodeURIComponent(document.getElementById('summaryList').innerText);
-  const subject = encodeURIComponent('HVAC Proposal Summary');
-  window.location.href = `mailto:?subject=${subject}&body=${body}`;
-}
-function generatePDF() {
-  generateSummary();
-  const printWindow = window.open('', '', 'width=800,height=900');
-  const summaryContent = document.getElementById('summaryList').innerHTML;
-
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>Proposal Summary</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
-          h1 { color: #007cbf; }
-          ul { padding-left: 20px; }
-          img.logo { width: 180px; margin-bottom: 20px; }
-        </style>
-      </head>
-      <body>
-        <img src='IP-lockup-trans.png' class='logo' alt='Company Logo'/>
-        <h1>HVAC Proposal Summary</h1>
-        <ul>${summaryContent}</ul>
-        <h3>Proposal Options</h3>
-        <ul>
-          ${Array.from(document.querySelectorAll('#proposalList li')).map(li => {
-            const model = li.querySelector('strong')?.innerText || '';
-            const price = li.querySelector('input')?.value || '';
-            const details = li.innerText.replace(/Price: \$[\d.]+/, '').replace(/\n/g, ' ');
-            return `<li><strong>${model}</strong>: ${details.trim()} - <strong>Final Price: $${price}</strong></li>`;
-          }).join('')}
-        </ul>
-      </body>
-    </html>`);
-  printWindow.document.close();
-  printWindow.print();
-}
-
-
-async function fetchEquipmentOptions() {
-  try {
-    const response = await fetch('https://script.google.com/macros/s/AKfycbyPjy-WpZkTEduwuKgo6qQBH7v8kBOv1mUCHKe-CYiSx17Ti6bCVSbYrDO_vADg2RqxyA/exec');
-    const equipment = await response.json();
-    const selectedSystem = selections.system;
-    const selectedEfficiency = selections.efficiency.includes("Standard") ? "Standard" : selections.efficiency.includes("Mid") ? "Mid" : "High";
-
-    const filtered = equipment.filter(e => 
-      (selectedSystem === 'Full System' || e['System Type'] === selectedSystem) &&
-      e['Efficiency Tier'] === selectedEfficiency
-    );
-
-    let proposalsHTML = '<h3>Recommended Equipment Options</h3><ul id="proposalList">';;
-    filtered.slice(0, 3).forEach(item => {
-      proposalsHTML += `<li><strong>${item['Model Number']}</strong>: ${item['Description']}<br/>` +
-                       `Cabinet: ${item['Cabinet Size']}, Price: $<input type='number' value='${item['Price']}' class='proposal-price' /></li><br/>`;
-    });
-    proposalsHTML += '</ul>';
-    document.getElementById('summaryList').insertAdjacentHTML('beforeend', proposalsHTML);
-  } catch (error) {
-    console.error('Error fetching equipment options:', error);
-  }
-}
-</script>
+    function generatePDF() {
+      alert('PDF generation feature coming soon.');
+    }
+  </script>
 </body>
 </html>
