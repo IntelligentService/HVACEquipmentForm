@@ -3,176 +3,295 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customize Your HVAC Equipment</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <title>HVAC Sales Form</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand-blue: #004b6b;
+      --brand-light: #f0f4f8;
+      --brand-accent: #0077cc;
+      --border-radius: 8px;
+    }
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: 'Roboto', sans-serif;
-      background: #f2faff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
+      margin: 0;
+      background-color: var(--brand-light);
+    }
+    header {
+      background-color: var(--brand-blue);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    header img {
+      max-width: 180px;
     }
     .page {
-      text-align: center;
-      max-width: 600px;
-      padding: 30px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.6s ease;
       display: none;
+      max-width: 800px;
+      background: white;
+      margin: 30px auto;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      animation: fadeIn 0.5s ease-in;
     }
-    .page.show {
+    .active {
       display: block;
-      opacity: 1;
-      transform: translateY(0);
     }
-    .logo { width: 200px; margin-bottom: 20px; }
-    h1, h2 { color: #007cbf; margin-bottom: 20px; }
-    .options-grid {
+    .title {
+      font-size: 26px;
+      color: var(--brand-blue);
+      margin-bottom: 20px;
+    }
+    .options {
       display: flex;
-      justify-content: center;
-      gap: 20px;
       flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
     }
-    .option-box {
-      width: 150px;
+    .option {
+      flex: 1 1 30%;
+      border: 2px solid #ccc;
+      padding: 15px;
+      border-radius: var(--border-radius);
       text-align: center;
       cursor: pointer;
+      transition: 0.3s;
     }
-    .option-img {
+    .option:hover, .option.selected {
+      border-color: var(--brand-accent);
+      box-shadow: 0 0 5px var(--brand-accent);
+    }
+    .option img {
       width: 100%;
-      border-radius: 10px;
-      border: 3px solid transparent;
-      transition: border-color 0.3s;
+      height: auto;
+      max-width: 120px;
+      margin-bottom: 10px;
     }
-    .option-img:hover { border-color: #007cbf; }
-    .option-img.selected { border-color: #28a745; }
+    .nav-btns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
     button {
-      background-color: #007cbf;
+      background: var(--brand-blue);
       color: white;
       border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      font-size: 16px;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
       cursor: pointer;
-      margin: 10px;
-      transition: background 0.3s ease;
     }
-    button:hover { background-color: #005f94; }
-    .text-option {
-      cursor: pointer;
-      color: #007cbf;
-      font-weight: bold;
-      margin-top: 10px;
+    #progressBar {
+      height: 8px;
+      background: var(--brand-accent);
+      width: 0;
+      transition: width 0.4s ease;
     }
-    .text-option.selected { color: #28a745; }
-    .summary-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #555;
     }
-    .summary-item {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 15px;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 10px;
-      width: 100%;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .summary-item img { width: 80px; height: auto; border-radius: 8px; }
-    .summary-item button {
-      margin-left: auto;
-      background: #ffc107;
-      color: black;
+    @media (max-width: 768px) {
+      .options {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
+  <header>
+    <img src="IP-lockup-trans.png" alt="Company Logo">
+    <h1>Customize Your HVAC Equipment</h1>
+    <div id="progressBar"></div>
+  </header>
 
-  <!-- Page: Summary -->
-  <div class="page" id="summaryPage">
-    <img src="IP-lockup-trans.png" class="logo" alt="Intelligent Service Logo" />
-    <h2>Your Custom HVAC Selection</h2>
-    <div class="summary-section" id="summaryContent"></div>
-    <button onclick="goToPreviousPage('summaryPage', 'thermostatPage')">Back</button>
-    <button onclick="generatePDF()">Download Proposal PDF</button>
+  <div id="page1" class="page active">
+    <div class="title">Select System Type</div>
+    <div class="options">
+      <div class="option" onclick="selectOption('Furnace')">
+        <img src="Furnace.webp" alt="Furnace">
+        <p>Trane Furnace</p>
+      </div>
+      <div class="option" onclick="selectOption('Air Conditioner')">
+        <img src="air_conditioner.webp" alt="Air Conditioner">
+        <p>Trane Air Conditioner</p>
+      </div>
+      <div class="option" onclick="selectOption('Both Furnace & Air Conditioner')">
+        <img src="Furnace.webp" alt="Both">
+        <p>Trane Furnace & Air Conditioner</p>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <div></div>
+      <button onclick="nextPage()">Next</button>
+    </div>
   </div>
 
+  <div id="page2" class="page">
+    <div class="title">Select Efficiency Level</div>
+    <div class="options">
+      <div class="option" onclick="selectOption('Standard (14-15 SEER)')">
+        <img src="efficiency_standard.png" alt="Standard">
+        <p>Standard (14-15 SEER)</p>
+      </div>
+      <div class="option" onclick="selectOption('Mid (16-18 SEER)')">
+        <img src="efficiency_mid.png" alt="Mid">
+        <p>Mid (16-18 SEER)</p>
+      </div>
+      <div class="option" onclick="selectOption('High (19-22 SEER)')">
+        <img src="efficiency_high.png" alt="High">
+        <p>High (19-22 SEER)</p>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button onclick="prevPage()">Back</button>
+      <button onclick="nextPage()">Next</button>
+    </div>
+  </div>
+
+  <div id="page3" class="page">
+    <div class="title">Select Thermostat</div>
+    <div class="options">
+      <div class="option" onclick="selectOption('Honeywell T4')">
+        <img src="Thermostat_T4.jpg" alt="Honeywell T4">
+        <p>Honeywell T4</p>
+      </div>
+      <div class="option" onclick="selectOption('Ecobee Pro')">
+        <img src="Thermostat_Ecobee.png" alt="Ecobee Pro">
+        <p>Ecobee Pro</p>
+      </div>
+      <div class="option" onclick="selectOption('Keep Existing Thermostat')">
+        <p>Keep Existing Thermostat</p>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button onclick="prevPage()">Back</button>
+      <button onclick="nextPage()">Next</button>
+    </div>
+  </div>
+
+  <div id="page4" class="page">
+    <div class="title">Air Quality Accessories</div>
+    <div class="options">
+      <div class="option" onclick="selectOption('Humidifier')">
+        <img src="Humidifier.jpg" alt="Humidifier">
+        <p>Humidifier</p>
+      </div>
+      <div class="option" onclick="selectOption('Air Purifier')">
+        <img src="Air_Purifier.jpg" alt="Air Purifier">
+        <p>Air Purifier</p>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button onclick="prevPage()">Back</button>
+      <button onclick="nextPage()">Next</button>
+    </div>
+  </div>
+
+  <div id="page5" class="page">
+    <div class="title">Filtration Options</div>
+    <div class="options">
+      <div class="option" onclick="selectOption('1\" Filter Rack')">
+        <img src="Filter_1Inch.webp" alt="1 inch">
+        <p>1" Filter Rack</p>
+      </div>
+      <div class="option" onclick="selectOption('4\" Media Filter Cabinet')">
+        <img src="Filter_4inch.jpg" alt="4 inch">
+        <p>4" Media Filter Cabinet</p>
+      </div>
+      <div class="option" onclick="selectOption('CleanEffects Air Cleaner')">
+        <img src="Filter_Cleaneffects.png" alt="CleanEffects">
+        <p>CleanEffects™ Air Cleaner</p>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button onclick="prevPage()">Back</button>
+      <button onclick="nextPage()">Next</button>
+    </div>
+  </div>
+
+  <div id="page6" class="page">
+    <div class="title">Summary of Selections</div>
+    <div id="summary"></div>
+    <div class="nav-btns">
+      <button onclick="prevPage()">Back</button>
+      <button onclick="alert('PDF generation coming soon')">Download PDF</button>
+    </div>
+  </div>
+
+  <footer>
+    Helping others live in greater Comfort &amp; Safety
+  </footer>
+
   <script>
-    let selections = {};
+    let currentPage = 1;
+    const totalPages = 6;
+    const selections = {};
 
-    function selectOption(el, category, value) {
-      document.querySelectorAll(`[data-category='${category}']`).forEach(el => el.classList.remove('selected'));
-      el.querySelector('img').classList.add('selected');
-      el.setAttribute('data-category', category);
-      selections[category] = value;
+    function updateProgressBar() {
+      const bar = document.getElementById('progressBar');
+      const percent = ((currentPage - 1) / (totalPages - 1)) * 100;
+      bar.style.width = percent + '%';
     }
 
-    function selectTextOption(el, category, value) {
-      document.querySelectorAll('.text-option').forEach(e => e.classList.remove('selected'));
-      el.classList.add('selected');
-      selections[category] = value;
+    function nextPage() {
+      document.getElementById(`page${currentPage}`).classList.remove('active');
+      currentPage++;
+      const next = document.getElementById(`page${currentPage}`);
+      if (next) next.classList.add('active');
+      updateProgressBar();
+      if (currentPage === 6) generateSummary();
     }
 
-    function goToNextPage(currentId, nextId) {
-      const current = document.getElementById(currentId);
-      current.classList.remove('show');
-      setTimeout(() => {
-        current.style.display = 'none';
-        if (nextId) {
-          const next = document.getElementById(nextId);
-          next.style.display = 'block';
-          setTimeout(() => next.classList.add('show'), 50);
-        }
-        if (nextId === 'summaryPage') renderSummary();
-      }, 600);
+    function prevPage() {
+      document.getElementById(`page${currentPage}`).classList.remove('active');
+      currentPage--;
+      document.getElementById(`page${currentPage}`).classList.add('active');
+      updateProgressBar();
     }
 
-    function goToPreviousPage(currentId, prevId) {
-      const current = document.getElementById(currentId);
-      current.classList.remove('show');
-      setTimeout(() => {
-        current.style.display = 'none';
-        if (prevId) {
-          const prev = document.getElementById(prevId);
-          prev.style.display = 'block';
-          setTimeout(() => prev.classList.add('show'), 50);
-        }
-      }, 600);
+    function selectOption(value) {
+      const all = document.querySelectorAll(`#page${currentPage} .option`);
+      all.forEach(el => el.classList.remove('selected'));
+      const selected = event.currentTarget;
+      selected.classList.add('selected');
+      selections[`page${currentPage}`] = value;
     }
 
-    function renderSummary() {
-      const summary = document.getElementById('summaryContent');
+    function generateSummary() {
+      const summary = document.getElementById('summary');
       summary.innerHTML = '';
       for (const key in selections) {
-        const imgPath = key === 'equipment' ? 'furnace.png' : key === 'efficiency' ? 'efficiency_mid.png' : key === 'thermostat' && selections[key] === 'Honeywell T4' ? 'Thermostat_T4.png' : 'Thermostat_Ecobee.png';
-        summary.innerHTML += `
-          <div class="summary-item">
-            <img src="${imgPath}" alt="${selections[key]}" />
-            <div><strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> ${selections[key]}</div>
-            <button onclick="editSelection('${key}')">Change</button>
-          </div>`;
+        const item = document.createElement('p');
+        item.textContent = `${key.replace('page', 'Step ')}: ${selections[key]}`;
+        summary.appendChild(item);
       }
     }
 
-    function editSelection(key) {
-      const pageMap = { equipment: 'equipmentPage', efficiency: 'efficiencyPage', thermostat: 'thermostatPage' };
-      goToNextPage('summaryPage', pageMap[key]);
+    async function fetchAHRIModels(efficiency, type) {
+      try {
+        const url = `https://script.google.com/macros/s/AKfycbyPjy-WpZkTEduwuKgo6qQBH7v8kBOv1mUCHKe-CYiSx17Ti6bCVSbYrDO_vADg2RqxyA/exec?efficiency=${encodeURIComponent(efficiency)}&type=${encodeURIComponent(type)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log("AHRI Lookup Success", data);
+        return data;
+      } catch (err) {
+        console.error("AHRI Lookup Error:", err);
+        return null;
+      }
     }
 
-    function generatePDF() {
-      alert('PDF generation feature coming soon.');
-    }
+    document.addEventListener('DOMContentLoaded', updateProgressBar);
   </script>
 </body>
 </html>
