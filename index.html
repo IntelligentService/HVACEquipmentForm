@@ -140,17 +140,17 @@
   <div id="page2" class="page">
     <div class="title">Select Efficiency Level</div>
     <div class="options">
-      <div class="option" onclick="selectOption('Standard (14-15 SEER)')">
+      <div class="option" onclick="selectOption('Standard')">
         <img src="efficiency_standard.png" alt="Standard">
-        <p>Standard (14-15 SEER)</p>
+        <p>Standard (SEER 13–14)</p>
       </div>
-      <div class="option" onclick="selectOption('Mid (16-18 SEER)')">
+      <div class="option" onclick="selectOption('Mid')">
         <img src="efficiency_mid.png" alt="Mid">
-        <p>Mid (16-18 SEER)</p>
+        <p>Mid Efficiency (SEER 15–17)</p>
       </div>
-      <div class="option" onclick="selectOption('High (19-22 SEER)')">
+      <div class="option" onclick="selectOption('High')">
         <img src="efficiency_high.png" alt="High">
-        <p>High (19-22 SEER)</p>
+        <p>High Efficiency (SEER 18+)</p>
       </div>
     </div>
     <div class="nav-btns">
@@ -160,7 +160,7 @@
   </div>
 
   <div id="page3" class="page">
-    <div class="title">Select Thermostat</div>
+    <div class="title">Select Your Thermostat</div>
     <div class="options">
       <div class="option" onclick="selectOption('Honeywell T4')">
         <img src="Thermostat_T4.png" alt="Honeywell T4">
@@ -170,7 +170,7 @@
         <img src="Thermostat_Ecobee.png" alt="Ecobee Pro">
         <p>Ecobee Pro</p>
       </div>
-      <div class="option" onclick="selectOption('Keep Existing Thermostat')">
+      <div class="option" onclick="selectOption('Keep Existing')">
         <p>Keep Existing Thermostat</p>
       </div>
     </div>
@@ -181,7 +181,7 @@
   </div>
 
   <div id="page4" class="page">
-    <div class="title">Air Quality Accessories</div>
+    <div class="title">Select Accessories</div>
     <div class="options">
       <div class="option" onclick="selectOption('Humidifier')">
         <img src="Humidifier.png" alt="Humidifier">
@@ -199,14 +199,14 @@
   </div>
 
   <div id="page5" class="page">
-    <div class="title">Filtration Options</div>
+    <div class="title">Select Filtration</div>
     <div class="options">
-      <div class="option" onclick="selectOption('1\" Filter Rack')">
-        <img src="Filter_1Inch.wpng" alt="1 inch">
+      <div class="option" onclick="selectOption('1 Inch Filter')">
+        <img src="Filter_1Inch.png" alt="1 Inch Filter">
         <p>1" Filter Rack</p>
       </div>
-      <div class="option" onclick="selectOption('4\" Media Filter Cabinet')">
-        <img src="Filter_4inch.png" alt="4 inch">
+      <div class="option" onclick="selectOption('4 Inch Media Filter')">
+        <img src="Filter_4inch.png" alt="4 Inch Media Filter">
         <p>4" Media Filter Cabinet</p>
       </div>
       <div class="option" onclick="selectOption('CleanEffects Air Cleaner')">
@@ -221,11 +221,11 @@
   </div>
 
   <div id="page6" class="page">
-    <div class="title">Summary of Selections</div>
-    <div id="summary"></div>
+    <div class="title">Summary</div>
+    <div id="summaryOutput"></div>
     <div class="nav-btns">
       <button onclick="prevPage()">Back</button>
-      <button onclick="alert('PDF generation coming soon')">Download PDF</button>
+      <button onclick="alert('PDF and Email options coming soon')">Finish</button>
     </div>
   </div>
 
@@ -250,7 +250,7 @@
       const next = document.getElementById(`page${currentPage}`);
       if (next) next.classList.add('active');
       updateProgressBar();
-      if (currentPage === 6) generateSummary();
+      if (currentPage === 6) displaySummary();
     }
 
     function prevPage() {
@@ -268,27 +268,9 @@
       selections[`page${currentPage}`] = value;
     }
 
-    function generateSummary() {
-      const summary = document.getElementById('summary');
-      summary.innerHTML = '';
-      for (const key in selections) {
-        const item = document.createElement('p');
-        item.textContent = `${key.replace('page', 'Step ')}: ${selections[key]}`;
-        summary.appendChild(item);
-      }
-    }
-
-    async function fetchAHRIModels(efficiency, type) {
-      try {
-        const url = `https://script.google.com/macros/s/AKfycbyPjy-WpZkTEduwuKgo6qQBH7v8kBOv1mUCHKe-CYiSx17Ti6bCVSbYrDO_vADg2RqxyA/exec?efficiency=${encodeURIComponent(efficiency)}&type=${encodeURIComponent(type)}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        console.log("AHRI Lookup Success", data);
-        return data;
-      } catch (err) {
-        console.error("AHRI Lookup Error:", err);
-        return null;
-      }
+    function displaySummary() {
+      const out = document.getElementById('summaryOutput');
+      out.innerHTML = '<ul>' + Object.entries(selections).map(([key, val]) => `<li><strong>${key}</strong>: ${val}</li>`).join('') + '</ul>';
     }
 
     document.addEventListener('DOMContentLoaded', updateProgressBar);
